@@ -8,16 +8,21 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
 public class Film {
-    private final int id;
+    private final Integer id;
     @NotBlank
     private final String name;
     @Size(max = 200)
     @NotBlank
     private final String description;
     private final LocalDate releaseDate;
-    private final Duration duration;
+    private final int duration;
+    private final List<FilmLike> userLike = new ArrayList<>();
+
 }

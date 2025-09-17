@@ -1,77 +1,71 @@
 package ru.nexo.ocenka.filmmonster.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.nexo.ocenka.filmmonster.exception.ValidationExceptions;
+import ru.nexo.ocenka.filmmonster.exception.NotFound;
 import ru.nexo.ocenka.filmmonster.model.Film;
+import ru.nexo.ocenka.filmmonster.service.FilmService;
+import ru.nexo.ocenka.filmmonster.storage.FilmStorage;
+import ru.nexo.ocenka.filmmonster.storage.UserStorage;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @Slf4j
 public class FilmController {
-    private final Map<Integer, Film> filmMap = new HashMap<>();
-    private int id = 0;
+    private final FilmStorage filmStorage;
+    private final FilmService filmService;
+    private final UserStorage userStorage;
+
+    @Autowired
+    FilmController(FilmStorage filmStorage, FilmService filmService, UserStorage userStorage) {
+        this.filmStorage = filmStorage;
+        this.filmService = filmService;
+        this.userStorage = userStorage;
+    }
 
     @PostMapping("/films")
     public Film createFilm(@Valid @RequestBody Film film) {
-        if (!validationFilm(film)) {
-            return film;
-        }
-        film = create(film);
-        filmMap.put(film.getId(), film);
-        return film;
+
+        return filmStorage.createFilm(film);
     }
 
     @PutMapping("/films")
     public Film updateFilm(@Valid @RequestBody Film film) {
-        if (!validationFilm(film)) {
-            return film;
-        }
-        film = create(film);
-        filmMap.put(film.getId(), film);
-        return film;
+        filmStorage.getFilm(film.getId());
+        return filmStorage.updateFilm(film);
     }
 
     @GetMapping("films")
     public List<Film> getAllFilm() {
-        return new ArrayList<>(filmMap.values());
+        return filmStorage.getAllFilm();
     }
 
-    private Film create(Film film) {
-        film = Film.builder()
-                .name(film.getName())
-                .description(film.getDescription())
-                .id(generateId())
-                .duration(film.getDuration())
-                .releaseDate(film.getReleaseDate())
-                .build();
-        return film;
+    @GetMapping("films/{idFilm}")
+    public Film getFilm(@PathVariable int idFilm) {
+        filmStorage.getFilm(idFilm);
+        return filmStorage.getFilm(idFilm);
     }
 
-    private Boolean validationFilm(Film film) {
-        try {
-            if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28)))
-                throw new ValidationExceptions("Дата релиза фильма не может быть раньше: ", LocalDate.of(1895, 12, 28));
-
-            if (film.getDuration().isNegative()) {
-                throw new ValidationExceptions("Продолжительность не может быть отрицательной");
-            }
-            return true;
-        } catch (ValidationException e) {
-            log.debug(e.getMessage());
-            return false;
-        }
-
+    @PutMapping("/films/{id}/like/{userId}")
+    public Film addLikeFilm(@PathVariable("id") int idFilm, @PathVariable("userId") int idUser) {
+        userStorage.getUser(idUser);
+        filmStorage.getFilm(idFilm);
+        return filmService.addLikeFilm(idFilm, idUser);
     }
 
-    private int generateId() {
-        return ++id;
+    @DeleteMapping("/films/{id}/like/{userId}")
+    public Film deleteLikeFilm(@PathVariable("id") int idFilm, @PathVariable("userId") int idUser) {
+        userStorage.getUser(idUser);
+        filmStorage.getFilm(idFilm);
+        return filmService.deleteLikeFilm(idFilm, idUser);
     }
+    @GetMapping("/films/popular")
+    public List<Film> getPopularFilmTenLike(@RequestParam(defaultValue = "10") String count) {
+        return filmService.getPopularFilmTenLike(Integer.parseInt(count));
+    }
+
 }
