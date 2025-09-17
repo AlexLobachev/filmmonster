@@ -5,8 +5,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
 import lombok.Builder;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -20,4 +23,6 @@ public class User {
     private final String name;
     @Past
     private final LocalDate birthday;
+
+    private final Set<Integer> friends = new HashSet<>();
 }

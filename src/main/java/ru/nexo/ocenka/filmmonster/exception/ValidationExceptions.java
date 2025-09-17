@@ -16,11 +16,8 @@ public class ValidationExceptions extends RuntimeException {
         super(message);
     }
 
-    public String getMessageError(String msg) {
-        return getMessage() + " " + msg;
-    }
 
-    public String getMessageError(LocalDate localDate) {
+    public String getMessageError() {
         return getMessage() + " " + localDate;
     }
 
