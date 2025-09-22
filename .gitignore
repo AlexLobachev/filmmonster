@@ -31,3 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
+/logback/
+/drawSQL-image-export-2025-09-22.png

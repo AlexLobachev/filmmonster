@@ -12,4 +12,5 @@ public interface UserService {
     List<User> getAllFriend(int id);
 
     List<User> getCommonFriends(int idUser, int idFriend);
+    User confirmYourFriendRequest(int idUser, int idFriend);
 }
