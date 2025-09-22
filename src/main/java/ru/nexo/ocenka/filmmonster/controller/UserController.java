@@ -70,6 +70,10 @@ public class UserController {
         userStorage.getUser(idFriend);
         return userService.getCommonFriends(idUser, idFriend);
     }
+    @PutMapping("/users/{id}/friend/{friendId}")
+    public User confirmYourFriendRequest(@PathVariable("id") int idUser,@PathVariable("friendId") int idFriend){
+        return userService.confirmYourFriendRequest(idUser,idFriend);
+    }
 
 
 }

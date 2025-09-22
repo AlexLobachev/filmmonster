@@ -4,16 +4,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 @Data
 @Builder
+
 public class Film {
     private final Integer id;
     @NotBlank
@@ -24,5 +24,6 @@ public class Film {
     private final LocalDate releaseDate;
     private final int duration;
     private final List<FilmLike> userLike = new ArrayList<>();
-
+    private final Set<Genre> genres = new HashSet<>();
+    private final Rating rating;
 }
