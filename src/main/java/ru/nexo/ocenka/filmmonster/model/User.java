@@ -22,6 +22,6 @@ public class User {
     private final String name;
     @Past
     private final LocalDate birthday;
-    private final Set<Friend> friends = new HashSet<>();
+
 
 }

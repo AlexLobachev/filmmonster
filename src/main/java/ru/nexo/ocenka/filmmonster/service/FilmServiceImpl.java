@@ -1,46 +1,47 @@
 package ru.nexo.ocenka.filmmonster.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.nexo.ocenka.filmmonster.db.FilmDao;
+import ru.nexo.ocenka.filmmonster.db.GenreDao;
+import ru.nexo.ocenka.filmmonster.db.RatingDao;
 import ru.nexo.ocenka.filmmonster.model.Film;
-import ru.nexo.ocenka.filmmonster.model.FilmLike;
-import ru.nexo.ocenka.filmmonster.storage.FilmStorage;
+import ru.nexo.ocenka.filmmonster.model.Genre;
+import ru.nexo.ocenka.filmmonster.model.Rating;
 
-import java.util.Comparator;
 import java.util.List;
 
-@Service
+@Service("filmService")
 public class FilmServiceImpl implements FilmService {
-    FilmStorage filmStorage;
+    @Qualifier("filmDao")
+    private final FilmDao filmDao;
+
 
     @Autowired
-    public FilmServiceImpl(FilmStorage filmStorage) {
-        this.filmStorage = filmStorage;
+    public FilmServiceImpl(FilmDao filmDao) {
+        this.filmDao = filmDao;
     }
 
-    public Film addLikeFilm(int idFilm, int idUser) {
-        Film film = filmStorage.getFilm(idFilm);
-        film.getUserLike().add(new FilmLike(idFilm, idUser));
-        return film;
-    }
-
-    public Film deleteLikeFilm(int idFilm, int idUser) {
-        Film film = filmStorage.getFilm(idFilm);
-        film.getUserLike().remove(new FilmLike(idFilm, idUser));
-        return film;
-    }
-
-    public List<Film> getPopularFilmTenLike(int count) {
-        List<Film> popular = filmStorage.getAllFilm();
-        Comparator<Film> popularFilmComparator = new PopularFilmComparator();
-        popular.sort(popularFilmComparator);
-        return popular.stream().limit(count).toList();
-    }
-}
-
-class PopularFilmComparator implements Comparator<Film> {
     @Override
-    public int compare(Film o1, Film o2) {
-        return o2.getUserLike().size() - o1.getUserLike().size();
+    public void addLikeFilm(int idFilm, int idUser) {
+        filmDao.addLikeFilm(idFilm, idUser);
+
     }
+
+    @Override
+    public void deleteLikeFilm(int idFilm, int idUser) {
+        filmDao.deleteLikeFilm(idFilm, idUser);
+
+    }
+
+    @Override
+    public List<Film> getPopularFilmTenLike(int count) {
+        return filmDao.getPopularFilmTenLike(count);
+    }
+
+
+
+
 }
+

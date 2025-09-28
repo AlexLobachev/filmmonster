@@ -3,21 +3,25 @@ package ru.nexo.ocenka.filmmonster.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
-import ru.nexo.ocenka.filmmonster.exception.NotFound;
 import ru.nexo.ocenka.filmmonster.model.Film;
+import ru.nexo.ocenka.filmmonster.model.Genre;
+import ru.nexo.ocenka.filmmonster.model.Rating;
 import ru.nexo.ocenka.filmmonster.service.FilmService;
 import ru.nexo.ocenka.filmmonster.storage.FilmStorage;
 import ru.nexo.ocenka.filmmonster.storage.UserStorage;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @Slf4j
 public class FilmController {
+    @Qualifier("filmStorage")
     private final FilmStorage filmStorage;
+    @Qualifier("filmService")
     private final FilmService filmService;
+    @Qualifier("userStorage")
     private final UserStorage userStorage;
 
     @Autowired
@@ -50,22 +54,49 @@ public class FilmController {
         return filmStorage.getFilm(idFilm);
     }
 
+    @DeleteMapping("films/{idFilm}")
+    void deleteFilm(@PathVariable("idFilm") int idFilm) {
+        filmStorage.deleteFilm(idFilm);
+    }
+
     @PutMapping("/films/{id}/like/{userId}")
-    public Film addLikeFilm(@PathVariable("id") int idFilm, @PathVariable("userId") int idUser) {
+    public void addLikeFilm(@PathVariable("id") int idFilm, @PathVariable("userId") int idUser) {
         userStorage.getUser(idUser);
         filmStorage.getFilm(idFilm);
-        return filmService.addLikeFilm(idFilm, idUser);
+        filmService.addLikeFilm(idFilm, idUser);
     }
 
     @DeleteMapping("/films/{id}/like/{userId}")
-    public Film deleteLikeFilm(@PathVariable("id") int idFilm, @PathVariable("userId") int idUser) {
+    public void deleteLikeFilm(@PathVariable("id") int idFilm, @PathVariable("userId") int idUser) {
         userStorage.getUser(idUser);
         filmStorage.getFilm(idFilm);
-        return filmService.deleteLikeFilm(idFilm, idUser);
+        filmService.deleteLikeFilm(idFilm, idUser);
     }
+
     @GetMapping("/films/popular")
     public List<Film> getPopularFilmTenLike(@RequestParam(defaultValue = "10") String count) {
         return filmService.getPopularFilmTenLike(Integer.parseInt(count));
+    }
+
+
+    @GetMapping("genres")
+    public List<Genre> getAllGenre() {
+        return filmStorage.getAllGenre();
+    }
+
+    @GetMapping("/genres/{id}")
+    public Genre getGenreById(@PathVariable("id") int idGenre) {
+        return filmStorage.getGenreById(idGenre);
+    }
+
+    @GetMapping("/mpa")
+    public List<Rating> getAllRating() {
+        return filmStorage.getAllRating();
+    }
+
+    @GetMapping("/mpa/{id}")
+    public Rating getRatingById(@PathVariable("id") int idRating) {
+        return filmStorage.getRatingById(idRating);
     }
 
 }

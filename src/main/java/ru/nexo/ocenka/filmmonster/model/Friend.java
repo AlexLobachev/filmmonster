@@ -9,6 +9,8 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @EqualsAndHashCode
 @ToString
+@Getter
+@Setter
 public class Friend {
     private final Integer idFriend;
     private int friendship_status = 0;

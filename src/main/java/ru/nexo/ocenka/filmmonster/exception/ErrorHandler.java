@@ -21,4 +21,5 @@ public class ErrorHandler {
     public Map<String,String> badRequest(ValidationException e){
         return Map.of("error",e.getMessage(),"HttpStatus",HttpStatus.BAD_REQUEST.getReasonPhrase());
     }
+
 }

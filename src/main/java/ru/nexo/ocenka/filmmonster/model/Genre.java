@@ -1,19 +1,11 @@
 package ru.nexo.ocenka.filmmonster.model;
 
-public enum Genre {
-    COMEDY("Комедия"),
-    DRAMA("Драма"),
-    CARTOON("Мультфильм"),
-    THRILLER("Триллер"),
-    DOCUMENTARY("Документальный"),
-    ACTION("Боевик");
-    private final String title;
+import lombok.Builder;
+import lombok.Data;
 
-    Genre(String title) {
-        this.title = title;
-    }
-
-    public String getTitle() {
-        return title;
-    }
+@Data
+@Builder
+public class Genre {
+    private final Integer id;
+    private final String name;
 }
